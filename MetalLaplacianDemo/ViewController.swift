@@ -22,11 +22,16 @@ class ViewController: UIViewController {
     lazy var commandQueue: MTLCommandQueue = device.makeCommandQueue()!
     lazy var textureLoader = MTKTextureLoader(device: device)
     
-    lazy var imageFilter: LaplacianPyramid = {
-        return LaplacianPyramid(device: self.device)
+    lazy var imageFilter: CommandBufferEncodable = {
+        ImageFilterFactory
+//            .laplacian
+            .sobel
+//            .blur(sigma: 10)
+            .makeFilter(device: device)
     }()
     
     var sourceTexture: MTLTexture?
+    var sourceImage: MPSImage?
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -36,6 +41,7 @@ class ViewController: UIViewController {
             The MTKView's draw() method is called once after the still image has been loaded.
          */
         sourceTexture = loadTexture(textureLoader: textureLoader)
+        sourceImage = try! textureLoader.loadImage()
         metalView.mtkView.draw()
     }
     
@@ -52,13 +58,60 @@ class ViewController: UIViewController {
     }
 
     func loadTexture(textureLoader: MTKTextureLoader) -> MTLTexture {
-        let url = Bundle.main.url(forResource: "Food_4", withExtension: "JPG")!
+        try! textureLoader.loadTexture()
+    }
+    
+    func apply(
+        filter: CommandBufferEncodable,
+        in drawable: CAMetalDrawable,
+        sourceTexture: MTLTexture,
+        commandBuffer: MTLCommandBuffer
+    ) {
+        /** Obtain the current drawable.
+         The final destination texture is always the filtered output image written to the MTKView's drawable.
+         */
+        let destinationTexture = drawable.texture
         
-        let options = [MTKTextureLoader.Option.textureUsage : NSNumber(value:MTLTextureUsage.shaderRead.rawValue |
-                                                                       MTLTextureUsage.shaderWrite.rawValue | MTLTextureUsage.pixelFormatView.rawValue),
-                       MTKTextureLoader.Option.SRGB: false, MTKTextureLoader.Option.allocateMipmaps : true]
+        // Encode the image filter operation.
+        filter.encode(
+            commandBuffer: commandBuffer,
+            sourceTexture: sourceTexture,
+            destinationTexture: destinationTexture
+        )
         
-        return try! textureLoader.newTexture(URL: url, options: options)
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+    }
+    
+    func apply(
+        filter: CommandBufferEncodable,
+        in drawable: CAMetalDrawable,
+        sourceImage: MPSImage,
+        commandBuffer: MTLCommandBuffer
+    ) {
+        let destinationTexture = drawable.texture
+        
+        let imageDescriptor = MPSImageDescriptor(
+                    channelFormat: MPSImageFeatureChannelFormat.unorm8,
+                    width: sourceImage.width,
+                    height: sourceImage.height,
+                    featureChannels: 3 //?
+        )
+        let destinationImage = MPSImage(texture: destinationTexture, featureChannels: 3) //
+//        let destinationImage = MPSImage(device: device,
+//                                        imageDescriptor: imageDescriptor)
+//        let destinationImage = MPSTemporaryImage(commandBuffer: commandBuffer,
+//                                                 imageDescriptor: imageDescriptor)
+//        
+        // Encode the image filter operation.
+        filter.encode(
+            commandBuffer: commandBuffer,
+            sourceImage: sourceImage,
+            destinationImage: destinationImage
+        )
+        
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
     }
 }
 
@@ -70,23 +123,54 @@ extension ViewController: MTKViewDelegate {
     func draw(in view: MTKView) {
         // Use a guard to ensure the method has a valid current drawable, a source texture, and an image filter.
         guard
-            let currentDrawable = metalView.mtkView.currentDrawable,
-            let sourceTexture = sourceTexture
+            let currentDrawable = metalView.mtkView.currentDrawable
+//            let sourceTexture = sourceTexture
         else { return }
-        
         let commandBuffer = commandQueue.makeCommandBuffer()!
+        if let sourceImage {
+            apply(filter: imageFilter,
+                  in: currentDrawable,
+                  sourceImage: sourceImage,
+                  commandBuffer: commandBuffer)
+        }
+        else if let sourceTexture {
+            apply(
+                filter: imageFilter,
+                in: currentDrawable,
+                sourceTexture: sourceTexture,
+                commandBuffer: commandBuffer
+            )
+        }
+    }
+}
+extension Bundle {
+    static var testImageURL: URL {
+        Self.main.url(forResource: "Food_4", withExtension: "JPG")!
+    }
+}
+extension MTKTextureLoader {
+    func loadImage(
+        from url: URL = Bundle.testImageURL
+    ) throws -> MPSImage {
+        let texture = try loadTexture(from: url, usage: [.shaderRead, .pixelFormatView])
+        return MPSImage(texture: texture, featureChannels: 3)
+    }
+    
+    func loadTexture(
+        from url: URL = Bundle.testImageURL,
+        usage: MTLTextureUsage = [.shaderRead, .shaderWrite, .pixelFormatView]
+    ) throws -> MTLTexture {
+//        let usage: MTLTextureUsage = [.shaderRead,.shaderWrite, .pixelFormatView]
         
-        /** Obtain the current drawable.
-            The final destination texture is always the filtered output image written to the MTKView's drawable.
-         */
-        let destinationTexture = currentDrawable.texture
-        
-        // Encode the image filter operation.
-        imageFilter.encode(to: commandBuffer,
-                           sourceTexture: sourceTexture,
-                           destinationTexture: destinationTexture)
-        
-        commandBuffer.present(currentDrawable)
-        commandBuffer.commit()
+        let options = [
+            MTKTextureLoader.Option.textureUsage : NSNumber(value: usage.rawValue),
+//            MTKTextureLoader.Option.SRGB: false, //with false there will be images by levels
+            MTKTextureLoader.Option.allocateMipmaps : true
+        ]
+        let texture = try newTexture(
+            URL: url,
+            options: options
+        )
+        return texture
     }
 }

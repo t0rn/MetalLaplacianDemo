@@ -14,22 +14,21 @@ class LaplacianPyramid: CommandBufferEncodable {
     let laplacianPyramid: MPSImageLaplacianPyramid
     
     required init(device: MTLDevice) {
-        gaussianPyramid = MPSImageGaussianPyramid(device: device) //centerWeight: 0.375)
+        gaussianPyramid = MPSImageGaussianPyramid(device: device, centerWeight: 0.375)
         gaussianPyramid.edgeMode = .clamp
         laplacianPyramid = MPSImageLaplacianPyramid(device: device)
         laplacianPyramid.edgeMode = .clamp
-        
     }
     
     func encode(
-        to commandBuffer: MTLCommandBuffer,
+        commandBuffer: MTLCommandBuffer,
         sourceTexture: MTLTexture,
         destinationTexture: MTLTexture
     ) {
         var inputTexture = sourceTexture
         
         let sourceTextureDescription = MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .bgra8Unorm,
+            pixelFormat: .bgra8Unorm, //rgba8Unorm wrong
             width: Int(inputTexture.width),
             height: Int(inputTexture.height),
             mipmapped: true
@@ -64,13 +63,14 @@ class LaplacianPyramid: CommandBufferEncodable {
         
 //        Grab a particular level for viewing
         let blitEncoder = commandBuffer.makeBlitCommandEncoder()!
-        let sourceLevel = 0
+        let sourceLevel = 0 //see MTKTextureLoader.Option.SRGB: false in texture loader
         let scaleFactor = NSDecimalNumber(decimal: pow(2, sourceLevel) ).intValue
         let sourceSize = MTLSize(
             width: Int(sourceTexture.width / scaleFactor),
             height: Int(sourceTexture.height / scaleFactor),
             depth: 1
         )
+        
         blitEncoder.copy(from: intermediateTexture, sourceSlice: 0, sourceLevel: sourceLevel,
                          sourceOrigin: .zero,
                          sourceSize: sourceSize,
@@ -79,4 +79,45 @@ class LaplacianPyramid: CommandBufferEncodable {
         
         blitEncoder.endEncoding()
     }
+
+    func encode(
+        commandBuffer: MTLCommandBuffer,
+        sourceImage: MPSImage,
+        destinationImage: MPSImage
+    ) {
+        /*
+        let inputTexture = try! textureLoader.loadTexture()
+        let sourceTextureDescription = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .bgra8Unorm,
+            width: Int(inputTexture.width),
+            height: Int(inputTexture.height),
+            mipmapped: true
+        )
+        sourceTextureDescription.usage = MTLTextureUsage(rawValue: ( MTLTextureUsage.shaderWrite.rawValue |
+                                                                     MTLTextureUsage.shaderRead.rawValue |
+                                                                     MTLTextureUsage.pixelFormatView.rawValue))
+        
+        let tmpImage = MPSTemporaryImage(commandBuffer: commandBuffer,
+                                         textureDescriptor: sourceTextureDescription)
+        
+        */
+
+        let imageDescriptor = MPSImageDescriptor(
+            channelFormat: MPSImageFeatureChannelFormat.unorm8,
+            width: sourceImage.width,
+            height: sourceImage.height,
+            featureChannels: 3 //?
+        )
+////        let destinationImage = MPSImage(device: device,
+////                                        imageDescriptor: descriptor)
+//        let tmpImage = MPSTemporaryImage(commandBuffer: commandBuffer,
+//                                         imageDescriptor: imageDescriptor)
+        self.encode(
+            commandBuffer: commandBuffer,
+            sourceTexture: sourceImage.texture,
+            destinationTexture: destinationImage.texture
+        )
+    }
 }
+
+

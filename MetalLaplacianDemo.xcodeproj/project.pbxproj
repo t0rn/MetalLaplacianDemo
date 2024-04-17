@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		33BA447F2BCFE04D00A1C504 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BA447E2BCFE04D00A1C504 /* TestViewController.swift */; };
 		33DE6E5C2BADD00300BC938C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E5B2BADD00300BC938C /* AppDelegate.swift */; };
 		33DE6E5E2BADD00300BC938C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E5D2BADD00300BC938C /* SceneDelegate.swift */; };
 		33DE6E602BADD00300BC938C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E5F2BADD00300BC938C /* ViewController.swift */; };
@@ -16,12 +17,13 @@
 		33DE6E702BADD0C900BC938C /* Food_4.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 33DE6E6F2BADD0C900BC938C /* Food_4.JPG */; };
 		33DE6E732BBB078900BC938C /* MetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E722BBB078900BC938C /* MetalView.swift */; };
 		33DE6E772BBC8EA300BC938C /* CommandBufferEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E762BBC8EA300BC938C /* CommandBufferEncodable.swift */; };
-		33DE6E792BBC8EC300BC938C /* LaplacianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E782BBC8EC300BC938C /* LaplacianFilter.swift */; };
 		33DE6E7B2BBC8ED800BC938C /* LaplacianPyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */; };
 		33DE6E7D2BBC8F0000BC938C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E7C2BBC8F0000BC938C /* Extensions.swift */; };
+		33DE6E7F2BBC90C300BC938C /* pulse.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 33DE6E7E2BBC908200BC938C /* pulse.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		33BA447E2BCFE04D00A1C504 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		33DE6E582BADD00300BC938C /* MetalLaplacianDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalLaplacianDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DE6E5B2BADD00300BC938C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		33DE6E5D2BADD00300BC938C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -33,9 +35,9 @@
 		33DE6E6F2BADD0C900BC938C /* Food_4.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = Food_4.JPG; sourceTree = "<group>"; };
 		33DE6E722BBB078900BC938C /* MetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView.swift; sourceTree = "<group>"; };
 		33DE6E762BBC8EA300BC938C /* CommandBufferEncodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBufferEncodable.swift; sourceTree = "<group>"; };
-		33DE6E782BBC8EC300BC938C /* LaplacianFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaplacianFilter.swift; sourceTree = "<group>"; };
 		33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaplacianPyramid.swift; sourceTree = "<group>"; };
 		33DE6E7C2BBC8F0000BC938C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		33DE6E7E2BBC908200BC938C /* pulse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = pulse.mp4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,12 +71,13 @@
 			isa = PBXGroup;
 			children = (
 				33DE6E6F2BADD0C900BC938C /* Food_4.JPG */,
+				33DE6E7E2BBC908200BC938C /* pulse.mp4 */,
 				33DE6E5B2BADD00300BC938C /* AppDelegate.swift */,
 				33DE6E5D2BADD00300BC938C /* SceneDelegate.swift */,
 				33DE6E5F2BADD00300BC938C /* ViewController.swift */,
+				33BA447E2BCFE04D00A1C504 /* TestViewController.swift */,
 				33DE6E7C2BBC8F0000BC938C /* Extensions.swift */,
 				33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */,
-				33DE6E782BBC8EC300BC938C /* LaplacianFilter.swift */,
 				33DE6E762BBC8EA300BC938C /* CommandBufferEncodable.swift */,
 				33DE6E722BBB078900BC938C /* MetalView.swift */,
 				33DE6E612BADD00300BC938C /* Main.storyboard */,
@@ -147,6 +150,7 @@
 				33DE6E682BADD00400BC938C /* LaunchScreen.storyboard in Resources */,
 				33DE6E652BADD00400BC938C /* Assets.xcassets in Resources */,
 				33DE6E632BADD00300BC938C /* Main.storyboard in Resources */,
+				33DE6E7F2BBC90C300BC938C /* pulse.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -159,11 +163,11 @@
 			files = (
 				33DE6E7B2BBC8ED800BC938C /* LaplacianPyramid.swift in Sources */,
 				33DE6E732BBB078900BC938C /* MetalView.swift in Sources */,
-				33DE6E792BBC8EC300BC938C /* LaplacianFilter.swift in Sources */,
 				33DE6E7D2BBC8F0000BC938C /* Extensions.swift in Sources */,
 				33DE6E772BBC8EA300BC938C /* CommandBufferEncodable.swift in Sources */,
 				33DE6E602BADD00300BC938C /* ViewController.swift in Sources */,
 				33DE6E5C2BADD00300BC938C /* AppDelegate.swift in Sources */,
+				33BA447F2BCFE04D00A1C504 /* TestViewController.swift in Sources */,
 				33DE6E5E2BADD00300BC938C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
