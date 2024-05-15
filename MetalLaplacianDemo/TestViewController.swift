@@ -45,7 +45,7 @@ class TestViewController: UIViewController {
             channelFormat: MPSImageFeatureChannelFormat.unorm8,
             width: sourceImage.width,
             height: sourceImage.height,
-            featureChannels: 3 //?
+            featureChannels: 4 //?
         )
 //        let destinationImage = MPSImage(device: device,
 //                                        imageDescriptor: descriptor)

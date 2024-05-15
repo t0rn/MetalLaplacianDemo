@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		330999462BD3C5A4009A171C /* Bundle+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330999452BD3C5A4009A171C /* Bundle+Image.swift */; };
+		330999482BD3C5BC009A171C /* MTKTextureLoader+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330999472BD3C5BC009A171C /* MTKTextureLoader+Image.swift */; };
+		336477BC2BD3CCFD00254F3A /* GaussianPyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336477BB2BD3CCFD00254F3A /* GaussianPyramid.swift */; };
+		336477BE2BD3D0F400254F3A /* ImageFilterFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336477BD2BD3D0F400254F3A /* ImageFilterFactory.swift */; };
 		33BA447F2BCFE04D00A1C504 /* TestViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BA447E2BCFE04D00A1C504 /* TestViewController.swift */; };
 		33DE6E5C2BADD00300BC938C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E5B2BADD00300BC938C /* AppDelegate.swift */; };
 		33DE6E5E2BADD00300BC938C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E5D2BADD00300BC938C /* SceneDelegate.swift */; };
@@ -23,6 +27,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		330999452BD3C5A4009A171C /* Bundle+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Image.swift"; sourceTree = "<group>"; };
+		330999472BD3C5BC009A171C /* MTKTextureLoader+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MTKTextureLoader+Image.swift"; sourceTree = "<group>"; };
+		336477BB2BD3CCFD00254F3A /* GaussianPyramid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GaussianPyramid.swift; sourceTree = "<group>"; };
+		336477BD2BD3D0F400254F3A /* ImageFilterFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilterFactory.swift; sourceTree = "<group>"; };
 		33BA447E2BCFE04D00A1C504 /* TestViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestViewController.swift; sourceTree = "<group>"; };
 		33DE6E582BADD00300BC938C /* MetalLaplacianDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MetalLaplacianDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33DE6E5B2BADD00300BC938C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -75,10 +83,14 @@
 				33DE6E5B2BADD00300BC938C /* AppDelegate.swift */,
 				33DE6E5D2BADD00300BC938C /* SceneDelegate.swift */,
 				33DE6E5F2BADD00300BC938C /* ViewController.swift */,
+				330999472BD3C5BC009A171C /* MTKTextureLoader+Image.swift */,
+				330999452BD3C5A4009A171C /* Bundle+Image.swift */,
 				33BA447E2BCFE04D00A1C504 /* TestViewController.swift */,
 				33DE6E7C2BBC8F0000BC938C /* Extensions.swift */,
 				33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */,
+				336477BB2BD3CCFD00254F3A /* GaussianPyramid.swift */,
 				33DE6E762BBC8EA300BC938C /* CommandBufferEncodable.swift */,
+				336477BD2BD3D0F400254F3A /* ImageFilterFactory.swift */,
 				33DE6E722BBB078900BC938C /* MetalView.swift */,
 				33DE6E612BADD00300BC938C /* Main.storyboard */,
 				33DE6E642BADD00400BC938C /* Assets.xcassets */,
@@ -161,13 +173,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				336477BE2BD3D0F400254F3A /* ImageFilterFactory.swift in Sources */,
 				33DE6E7B2BBC8ED800BC938C /* LaplacianPyramid.swift in Sources */,
+				330999482BD3C5BC009A171C /* MTKTextureLoader+Image.swift in Sources */,
 				33DE6E732BBB078900BC938C /* MetalView.swift in Sources */,
 				33DE6E7D2BBC8F0000BC938C /* Extensions.swift in Sources */,
 				33DE6E772BBC8EA300BC938C /* CommandBufferEncodable.swift in Sources */,
 				33DE6E602BADD00300BC938C /* ViewController.swift in Sources */,
 				33DE6E5C2BADD00300BC938C /* AppDelegate.swift in Sources */,
+				330999462BD3C5A4009A171C /* Bundle+Image.swift in Sources */,
 				33BA447F2BCFE04D00A1C504 /* TestViewController.swift in Sources */,
+				336477BC2BD3CCFD00254F3A /* GaussianPyramid.swift in Sources */,
 				33DE6E5E2BADD00300BC938C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

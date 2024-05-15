@@ -10,6 +10,19 @@ import MetalKit
 import MetalPerformanceShaders
 
 class ViewController: UIViewController {
+    //TODO: inject instead
+    let device = MTLCreateSystemDefaultDevice()!
+    lazy var commandQueue: MTLCommandQueue = device.makeCommandQueue()!
+    lazy var textureLoader = MTKTextureLoader(device: device)
+    
+    private(set) lazy var imageView: UIImageView = {
+        let view = UIImageView(frame: .zero)
+        view.contentMode = .scaleAspectFit
+        view.translatesAutoresizingMaskIntoConstraints = false
+        let image = UIImage(contentsOfFile: Bundle.testImageURL.path())
+        view.image = image
+        return view
+    }()
     
     private(set) lazy var metalView: MetalView = {
         let view = MetalView(device: device)
@@ -17,17 +30,18 @@ class ViewController: UIViewController {
         return view
     }()
     
-    //TODO: inject instead
-    let device = MTLCreateSystemDefaultDevice()!
-    lazy var commandQueue: MTLCommandQueue = device.makeCommandQueue()!
-    lazy var textureLoader = MTKTextureLoader(device: device)
-    
     lazy var imageFilter: CommandBufferEncodable = {
         ImageFilterFactory
-//            .laplacian
-            .sobel
-//            .blur(sigma: 10)
+            .custom
             .makeFilter(device: device)
+    }()
+    
+    lazy var actionButton: UIButton = {
+        let button = UIButton(primaryAction: UIAction(title: "draw", handler: { [weak self] action in
+            self?.draw()
+        }))
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     var sourceTexture: MTLTexture?
@@ -35,32 +49,38 @@ class ViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
-        /** The content is rendered *after* the view has appeared.
-            This allows the MTKView to set up properly and get the current drawable.
-            The MTKView's draw() method is called once after the still image has been loaded.
-         */
-        sourceTexture = loadTexture(textureLoader: textureLoader)
-        sourceImage = try! textureLoader.loadImage()
-        metalView.mtkView.draw()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.addSubview(imageView)
+        view.addSubview(actionButton)
         view.addSubview(metalView)
+        
         NSLayoutConstraint.activate([
-            view.topAnchor.constraint(equalTo: metalView.topAnchor, constant: -80),
-            view.leadingAnchor.constraint(equalTo: metalView.leadingAnchor),
-            view.trailingAnchor.constraint(equalTo: metalView.trailingAnchor),
-            view.bottomAnchor.constraint(equalTo: metalView.bottomAnchor)
+            view.topAnchor.constraint(equalTo: imageView.topAnchor, constant: -80),
+            view.leadingAnchor.constraint(equalTo: imageView.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: imageView.trailingAnchor),
+            actionButton.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            actionButton.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 4),
+            actionButton.bottomAnchor.constraint(equalTo: metalView.topAnchor, constant: 4),
+            actionButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            imageView.leadingAnchor.constraint(equalTo: metalView.leadingAnchor),
+            imageView.trailingAnchor.constraint(equalTo: metalView.trailingAnchor),
+            metalView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
         ])
     }
-
-    func loadTexture(textureLoader: MTKTextureLoader) -> MTLTexture {
-        try! textureLoader.loadTexture()
-    }
     
+    func draw() {
+        /** The content is rendered *after* the view has appeared.
+            This allows the MTKView to set up properly and get the current drawable.
+            The MTKView's draw() method is called once after the still image has been loaded.
+         */
+        sourceImage = try! textureLoader.loadImage()
+        metalView.mtkView.draw()
+    }
+
     func apply(
         filter: CommandBufferEncodable,
         in drawable: CAMetalDrawable,
@@ -90,19 +110,8 @@ class ViewController: UIViewController {
         commandBuffer: MTLCommandBuffer
     ) {
         let destinationTexture = drawable.texture
+        let destinationImage = MPSImage(texture: destinationTexture, featureChannels: 4)
         
-        let imageDescriptor = MPSImageDescriptor(
-                    channelFormat: MPSImageFeatureChannelFormat.unorm8,
-                    width: sourceImage.width,
-                    height: sourceImage.height,
-                    featureChannels: 3 //?
-        )
-        let destinationImage = MPSImage(texture: destinationTexture, featureChannels: 3) //
-//        let destinationImage = MPSImage(device: device,
-//                                        imageDescriptor: imageDescriptor)
-//        let destinationImage = MPSTemporaryImage(commandBuffer: commandBuffer,
-//                                                 imageDescriptor: imageDescriptor)
-//        
         // Encode the image filter operation.
         filter.encode(
             commandBuffer: commandBuffer,
@@ -121,11 +130,8 @@ extension ViewController: MTKViewDelegate {
     }
     
     func draw(in view: MTKView) {
-        // Use a guard to ensure the method has a valid current drawable, a source texture, and an image filter.
-        guard
-            let currentDrawable = metalView.mtkView.currentDrawable
-//            let sourceTexture = sourceTexture
-        else { return }
+        guard let currentDrawable = metalView.mtkView.currentDrawable else { return }
+        
         let commandBuffer = commandQueue.makeCommandBuffer()!
         if let sourceImage {
             apply(filter: imageFilter,
@@ -133,44 +139,5 @@ extension ViewController: MTKViewDelegate {
                   sourceImage: sourceImage,
                   commandBuffer: commandBuffer)
         }
-        else if let sourceTexture {
-            apply(
-                filter: imageFilter,
-                in: currentDrawable,
-                sourceTexture: sourceTexture,
-                commandBuffer: commandBuffer
-            )
-        }
-    }
-}
-extension Bundle {
-    static var testImageURL: URL {
-        Self.main.url(forResource: "Food_4", withExtension: "JPG")!
-    }
-}
-extension MTKTextureLoader {
-    func loadImage(
-        from url: URL = Bundle.testImageURL
-    ) throws -> MPSImage {
-        let texture = try loadTexture(from: url, usage: [.shaderRead, .pixelFormatView])
-        return MPSImage(texture: texture, featureChannels: 3)
-    }
-    
-    func loadTexture(
-        from url: URL = Bundle.testImageURL,
-        usage: MTLTextureUsage = [.shaderRead, .shaderWrite, .pixelFormatView]
-    ) throws -> MTLTexture {
-//        let usage: MTLTextureUsage = [.shaderRead,.shaderWrite, .pixelFormatView]
-        
-        let options = [
-            MTKTextureLoader.Option.textureUsage : NSNumber(value: usage.rawValue),
-//            MTKTextureLoader.Option.SRGB: false, //with false there will be images by levels
-            MTKTextureLoader.Option.allocateMipmaps : true
-        ]
-        let texture = try newTexture(
-            URL: url,
-            options: options
-        )
-        return texture
     }
 }
