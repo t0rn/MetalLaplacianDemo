@@ -76,11 +76,15 @@ class LaplacianPyramid: CommandBufferEncodable {
     
     func encode(
         commandBuffer: MTLCommandBuffer,
+        //sourceTexture has bgra8Unorm pixel format
         sourceTexture: MTLTexture,
         destinationTexture: MTLTexture
     ) {
-        var gaussianTexture = sourceTexture
-
+        guard var gaussianTexture = convertTexture(device: device,
+                                                   commandBuffer: commandBuffer,
+                                                   inputTexture: sourceTexture) else {
+            return
+        }
         //1. Create Gaussian Pyramid from source texture input for Laplassian
         //Image to Pyramid, Laplacian requires a Guassian Pyramid as input
         gaussianPyramid.encode(
@@ -90,7 +94,7 @@ class LaplacianPyramid: CommandBufferEncodable {
         )
         
         let sourceTextureDescription = MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .bgra8Unorm,
+            pixelFormat: .rgba16Float,
             width: Int(sourceTexture.width),
             height: Int(sourceTexture.height),
             mipmapped: true
@@ -158,5 +162,48 @@ class LaplacianPyramid: CommandBufferEncodable {
                                  height: max(sourceTexture.height / scaleFactor, 1),
                                  depth: 1)
         return sourceSize
+    }
+    
+    func convertTexture(device: MTLDevice, 
+                        commandBuffer: MTLCommandBuffer,
+                        inputTexture: MTLTexture) -> MTLTexture? {
+        guard let defaultLibrary = device.makeDefaultLibrary(),
+              let kernelFunction = defaultLibrary.makeFunction(name: "convertTexture"),
+              let computePipelineState = try? device.makeComputePipelineState(function: kernelFunction),
+              let computeEncoder = commandBuffer.makeComputeCommandEncoder() else {
+            return nil
+        }
+
+        let outputTexture = createTexture(device: device, 
+                                          width: inputTexture.width,
+                                          height: inputTexture.height,
+                                          pixelFormat: .rgba16Float,
+                                          mipmapLevelCount: inputTexture.mipmapLevelCount)
+
+        computeEncoder.setComputePipelineState(computePipelineState)
+        computeEncoder.setTexture(inputTexture, index: 0)
+        computeEncoder.setTexture(outputTexture, index: 1)
+
+        let threadGroupSize = MTLSizeMake(16, 16, 1)
+        let threadGroups = MTLSize(width: (inputTexture.width + threadGroupSize.width - 1) / threadGroupSize.width,
+                                   height: (inputTexture.height + threadGroupSize.height - 1) / threadGroupSize.height,
+                                   depth: 1)
+
+        computeEncoder.dispatchThreadgroups(threadGroups, threadsPerThreadgroup: threadGroupSize)
+        computeEncoder.endEncoding()
+
+
+        return outputTexture
+    }
+    
+    func createTexture(device: MTLDevice, width: Int, height: Int, pixelFormat: MTLPixelFormat, mipmapLevelCount: Int) -> MTLTexture? {
+        let textureDescriptor = MTLTextureDescriptor()
+        textureDescriptor.pixelFormat = pixelFormat
+        textureDescriptor.width = width
+        textureDescriptor.height = height
+        textureDescriptor.usage = [.shaderRead, .shaderWrite]
+        textureDescriptor.storageMode = .private
+        textureDescriptor.mipmapLevelCount = mipmapLevelCount
+        return device.makeTexture(descriptor: textureDescriptor)
     }
 }

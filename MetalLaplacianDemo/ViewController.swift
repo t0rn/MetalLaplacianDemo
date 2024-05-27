@@ -133,11 +133,11 @@ extension ViewController: MTKViewDelegate {
         guard let currentDrawable = metalView.mtkView.currentDrawable else { return }
         
         let commandBuffer = commandQueue.makeCommandBuffer()!
-        if let sourceImage {
-            apply(filter: imageFilter,
-                  in: currentDrawable,
-                  sourceImage: sourceImage,
-                  commandBuffer: commandBuffer)
-        }
+        guard let sourceImage  = sourceImage else { return }
+        
+        apply(filter: imageFilter,
+              in: currentDrawable,
+              sourceImage: sourceImage,
+              commandBuffer: commandBuffer)
     }
 }

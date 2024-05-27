@@ -24,6 +24,7 @@
 		33DE6E7B2BBC8ED800BC938C /* LaplacianPyramid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */; };
 		33DE6E7D2BBC8F0000BC938C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DE6E7C2BBC8F0000BC938C /* Extensions.swift */; };
 		33DE6E7F2BBC90C300BC938C /* pulse.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 33DE6E7E2BBC908200BC938C /* pulse.mp4 */; };
+		33FD3E2C2BFB654700292C2A /* Converter.metal in Sources */ = {isa = PBXBuildFile; fileRef = 33FD3E2B2BFB654700292C2A /* Converter.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaplacianPyramid.swift; sourceTree = "<group>"; };
 		33DE6E7C2BBC8F0000BC938C /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		33DE6E7E2BBC908200BC938C /* pulse.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = pulse.mp4; sourceTree = "<group>"; };
+		33FD3E2B2BFB654700292C2A /* Converter.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Converter.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,7 @@
 				33BA447E2BCFE04D00A1C504 /* TestViewController.swift */,
 				33DE6E7C2BBC8F0000BC938C /* Extensions.swift */,
 				33DE6E7A2BBC8ED800BC938C /* LaplacianPyramid.swift */,
+				33FD3E2B2BFB654700292C2A /* Converter.metal */,
 				336477BB2BD3CCFD00254F3A /* GaussianPyramid.swift */,
 				33DE6E762BBC8EA300BC938C /* CommandBufferEncodable.swift */,
 				336477BD2BD3D0F400254F3A /* ImageFilterFactory.swift */,
@@ -180,6 +183,7 @@
 				33DE6E7D2BBC8F0000BC938C /* Extensions.swift in Sources */,
 				33DE6E772BBC8EA300BC938C /* CommandBufferEncodable.swift in Sources */,
 				33DE6E602BADD00300BC938C /* ViewController.swift in Sources */,
+				33FD3E2C2BFB654700292C2A /* Converter.metal in Sources */,
 				33DE6E5C2BADD00300BC938C /* AppDelegate.swift in Sources */,
 				330999462BD3C5A4009A171C /* Bundle+Image.swift in Sources */,
 				33BA447F2BCFE04D00A1C504 /* TestViewController.swift in Sources */,

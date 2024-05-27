@@ -15,7 +15,8 @@ class MetalView: UIView {
         view.isPaused = true
 //        view.clearColor = MTLClearColor()
 //        view.isOpaque = false
-        view.colorPixelFormat = .bgra8Unorm //?
+        view.colorPixelFormat = .rgba16Float
+//        view.colorPixelFormat = .bgra8Unorm //?
 //        view.contentMode = .scaleAspectFit //?
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
